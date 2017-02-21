@@ -47,11 +47,28 @@ public class TransactionAggregator {
         return reports;
     }
     
+    /**
+     * Generates and returns the identifier of the given transaction.
+     * 
+     * The format of the identifier is of the format {@literal <month>-<year>}.
+     * 
+     * @param transaction whose identifier is to be produced
+     * @return identifier of the given transaction
+     */
     private static String identifier(final Transaction transaction) {
         final LocalDateTime date = LocalDateTime.parse(transaction.transactionTime(), DateTimeFormatter.ofPattern(TRANSACTION_TIME_FORMAT));
         return date.getYear() + "-" + String.format("%02d", date.getMonthValue());
     }
     
+    /**
+     * Returns true if the given Transaction is an expense; otherwise returns 
+     * false. In the case the transaction is not an expense, it is safe to 
+     * assume it is income.
+     * 
+     * @param transaction Transaction whose expense status is to be determined.
+     * @return true if the given Transaction is an expense; otherwise returns 
+     * false
+     */
     private static boolean isExpense(final Transaction transaction) {
         return transaction.amount().signum() == -1;
     }
