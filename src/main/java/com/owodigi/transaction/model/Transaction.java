@@ -1,10 +1,13 @@
 package com.owodigi.transaction.model;
 
 import java.math.BigDecimal;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Represents a user's electronic financial transactions
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Transaction {
     private BigDecimal amount;
     private boolean isPending;
@@ -17,43 +20,43 @@ public class Transaction {
     private String merchant;
     private String transactionTime;
 
-    public BigDecimal getAmount() {
+    public BigDecimal amount() {
         return amount;
     }
 
-    public boolean isIsPending() {
+    public boolean isPending() {
         return isPending;
     }
 
-    public long getAggregationTime() {
+    public long aggregationTime() {
         return aggregationTime;
     }
 
-    public String getAccountId() {
+    public String accountId() {
         return accountId;
     }
 
-    public long getClearDate() {
+    public long clearDate() {
         return clearDate;
     }
 
-    public long getTransactionId() {
+    public long transactionId() {
         return transactionId;
     }
 
-    public String getRawMerchant() {
+    public String rawMerchant() {
         return rawMerchant;
     }
 
-    public String getCategorization() {
+    public String categorization() {
         return categorization;
     }
 
-    public String getMerchant() {
+    public String merchant() {
         return merchant;
     }
 
-    public String getTransactionTime() {
+    public String transactionTime() {
         return transactionTime;
     }
 
@@ -61,26 +64,32 @@ public class Transaction {
         this.amount = amount;
     }
 
+    @JsonProperty("is-pending")
     public void setIsPending(boolean isPending) {
         this.isPending = isPending;
     }
 
+    @JsonProperty("aggregation-time")
     public void setAggregationTime(long aggregationTime) {
         this.aggregationTime = aggregationTime;
     }
 
+    @JsonProperty("account-id")
     public void setAccountId(String accountId) {
         this.accountId = accountId;
     }
 
+    @JsonProperty("clear-date")
     public void setClearDate(long clearDate) {
         this.clearDate = clearDate;
     }
 
+    @JsonProperty("transaction-id")
     public void setTransactionId(long transactionId) {
         this.transactionId = transactionId;
     }
 
+    @JsonProperty("raw-merchant")
     public void setRawMerchant(String rawMerchant) {
         this.rawMerchant = rawMerchant;
     }
@@ -93,6 +102,7 @@ public class Transaction {
         this.merchant = merchant;
     }
 
+    @JsonProperty("transaction-time")
     public void setTransactionTime(String transactionTime) {
         this.transactionTime = transactionTime;
     }
