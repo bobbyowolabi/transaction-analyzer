@@ -17,6 +17,7 @@ import org.junit.Test;
 
 public class TransactionAggregatorTest {
     private TransactionEndpoint endpoint;
+    private static final Path ALL_TRANSACTIONS_FULL = Paths.get("src/test/resources/get-all-transactions-full.json");
     private static final Path ALL_EXPENSES_PATH = Paths.get("src/test/resources/all-expenses.json");
     private static final Path ALL_INCOME_PATH = Paths.get("src/test/resources/all-income.json");
     private static final Path INCOME_AND_EXPENSES_PATH = Paths.get("src/test/resources/income-and-expenses.json");
@@ -100,5 +101,24 @@ public class TransactionAggregatorTest {
     @Test(expected = NullPointerException.class)
     public void testAverageNullTransactions() {
         TransactionAggregator.average(null);
+    }
+
+    @Test
+    public void testGetAllTransactionsRealisticData() {
+        endpoint = new MockTransactionEndpoint(ALL_TRANSACTIONS_FULL);
+        final List<Transaction> transactions = endpoint.getAllTransactions();
+        final Map<String, TransactionReport> expected = new HashMap<>();
+        for (final Transaction transaction : transactions) {
+            final String id = transaction.transactionTime().substring(0, 7);
+            final TransactionReport report = expected.getOrDefault(id, new TransactionReport());
+            expected.putIfAbsent(id, report);
+            if (transaction.amount().signum() == -1) {
+                report.setSpent(report.spent().add(transaction.amount().abs()));
+            } else {
+                report.setIncome(report.income().add(transaction.amount()));
+            }
+        }
+        final Map<String, TransactionReport> actual = TransactionAggregator.sum(transactions);
+        assertEquals("Transaction Report", expected, actual);
     }
 }
