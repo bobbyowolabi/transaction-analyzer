@@ -17,7 +17,9 @@ import org.junit.Test;
 
 public class TransactionAggregatorTest {
     private TransactionEndpoint endpoint;
-    private static final Path MINIMAL_TRANSACTION_PATH = Paths.get("src/test/resources/get-all-transactions-minimal.json");
+    private static final Path ALL_EXPENSES_PATH = Paths.get("src/test/resources/all-expenses.json");
+    private static final Path ALL_INCOME_PATH = Paths.get("src/test/resources/all-income.json");
+    private static final Path INCOME_AND_EXPENSES_PATH = Paths.get("src/test/resources/income-and-expenses.json");
     
     private void assertEquals(final String message, final Map<String, TransactionReport> expected, final Map<String, TransactionReport> actual) {
         Assert.assertEquals("TransactionReport Map Size", expected.size(), actual.size());
@@ -37,12 +39,36 @@ public class TransactionAggregatorTest {
     }
     
     @Test
-    public void testSum() {
-        endpoint = new MockTransactionEndpoint(MINIMAL_TRANSACTION_PATH);
+    public void testSumAllExpenses() {
+        endpoint = new MockTransactionEndpoint(ALL_EXPENSES_PATH);
         final List<Transaction> transactions = endpoint.getAllTransactions();
         final Map<String, TransactionReport> expected = new HashMap<String, TransactionReport>() {{
             put("2014-10", new TransactionReport(BigDecimal.valueOf(352300L), BigDecimal.ZERO));
             put("2017-02", new TransactionReport(BigDecimal.valueOf(1000000L), BigDecimal.ZERO));
+        }};
+        final Map<String, TransactionReport> actual = TransactionAggregator.sum(transactions);
+        assertEquals("Transaction Report", expected, actual);
+    }
+    
+    @Test
+    public void testSumAllIncome() {
+        endpoint = new MockTransactionEndpoint(ALL_INCOME_PATH);
+        final List<Transaction> transactions = endpoint.getAllTransactions();
+        final Map<String, TransactionReport> expected = new HashMap<String, TransactionReport>() {{
+            put("2014-10", new TransactionReport(BigDecimal.ZERO, BigDecimal.valueOf(352300L)));
+            put("2017-02", new TransactionReport(BigDecimal.ZERO, BigDecimal.valueOf(1000000L)));
+        }};
+        final Map<String, TransactionReport> actual = TransactionAggregator.sum(transactions);
+        assertEquals("Transaction Report", expected, actual);
+    }
+    
+    @Test
+    public void testIncomeAndExpense() {
+        endpoint = new MockTransactionEndpoint(INCOME_AND_EXPENSES_PATH);
+        final List<Transaction> transactions = endpoint.getAllTransactions();
+        final Map<String, TransactionReport> expected = new HashMap<String, TransactionReport>() {{
+            put("2014-10", new TransactionReport(BigDecimal.valueOf(30200L), BigDecimal.valueOf(133300L)));
+            put("2017-02", new TransactionReport(BigDecimal.valueOf(188800L), BigDecimal.valueOf(1000000L)));
         }};
         final Map<String, TransactionReport> actual = TransactionAggregator.sum(transactions);
         assertEquals("Transaction Report", expected, actual);
@@ -57,7 +83,7 @@ public class TransactionAggregatorTest {
         Assert.assertEquals("sum of empty transactions", expected, actual);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testSumNullTransactions() {
         TransactionAggregator.sum(null);
     }
@@ -71,7 +97,7 @@ public class TransactionAggregatorTest {
         Assert.assertEquals("sum of empty transactions", expected, actual);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testAverageNullTransactions() {
         TransactionAggregator.average(null);
     }

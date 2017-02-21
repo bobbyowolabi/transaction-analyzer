@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *
+ * TransactionEndpoint that only returns empty Collections as results.
  */
 public class EmptyTransactionEndpoint implements TransactionEndpoint {
 

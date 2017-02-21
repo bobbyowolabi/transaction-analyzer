@@ -1,0 +1,67 @@
+{
+    "error": "no-error",
+    "transactions": [
+        {
+            "account-id": "nonce:comfy-cc/hdhehe",
+            "aggregation-time": 1412686740000,
+            "amount": 34300,
+            "categorization": "Unknown",
+            "clear-date": 1412790480000,
+            "is-pending": false,
+            "merchant": "7-Eleven 23853",
+            "raw-merchant": "7-ELEVEN 23853",
+            "transaction-id": "1412790480000",
+            "transaction-time": "2014-10-07T12:59:00.000Z"
+        },
+        {
+            "account-id": "nonce:comfy-cc/hdhehe",
+            "aggregation-time": 1412702940000,
+            "amount": -30200,
+            "categorization": "Unknown",
+            "clear-date": 1412985120000,
+            "is-pending": false,
+            "merchant": "Sunoco",
+            "raw-merchant": "SUNOCO 0299792200",
+            "transaction-id": "1412985120000",
+            "transaction-time": "2014-10-07T17:29:00.000Z"
+        },
+        {
+            "account-id": "nonce:comfy-cc/hdhehe",
+            "aggregation-time": 1412733360000,
+            "amount": 99000,
+            "categorization": "Unknown",
+            "clear-date": 1412845980000,
+            "is-pending": false,
+            "merchant": "Krispy Kreme Donuts",
+            "raw-merchant": "Krispy Kreme Donuts",
+            "transaction-id": "1412845980000",
+            "transaction-time": "2014-10-08T01:56:00.000Z"
+        },
+        {
+            "account-id": "nonce:comfy-cc/hdhehe",
+            "aggregation-time": 1412760240000,
+            "amount": -188800,
+            "categorization": "Unknown",
+            "clear-date": 1412942220000,
+            "is-pending": false,
+            "merchant": "Giant Eag 1201",
+            "raw-merchant": "GIANT EAG 1201",
+            "transaction-id": "1412942220000",
+            "transaction-time": "2017-02-08T09:24:00.000Z"
+        },
+        {
+            "account-id": "nonce:comfy-checking/hdhehe",
+            "aggregation-time": 1487157843421,
+            "amount": 1000000,
+            "categorization": "Cash & ATM",
+            "clear-date": 1487310300000,
+            "is-pending": false,
+            "memo-only-for-testing": "Example Memo",
+            "merchant": "ATM Withdrawal",
+            "payee-name-only-for-testing": "ATM WITHDRAWAL",
+            "raw-merchant": "ATM WITHDRAWAL",
+            "transaction-id": "1487310300000",
+            "transaction-time": "2017-02-15T00:00:00.000Z"
+        }
+    ]
+}

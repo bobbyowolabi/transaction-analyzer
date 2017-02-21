@@ -4,7 +4,6 @@ import com.owodigi.transaction.model.Transaction;
 import com.owodigi.transaction.model.TransactionReport;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +24,10 @@ public class TransactionAggregator {
      * {@literal <month>-<year>}.
      * 
      * @param transactions the transactions whose amounts should be aggregated 
-     * @return 
+     * @return TransactionReport for every month-year represented in the data
+     * @throws NullPointerException if given Transaction List is null
      */
-    public static Map<String, TransactionReport> sum(List<Transaction> transactions) {
+    public static Map<String, TransactionReport> sum(List<Transaction> transactions) throws NullPointerException {
         final Map<String, TransactionReport> reports = new HashMap<>();
         for (final Transaction transaction : transactions) {
             final String identifier = identifier(transaction);
@@ -60,7 +60,10 @@ public class TransactionAggregator {
      * @return 
      */
     public static Map<String, TransactionReport> average(List<Transaction> transactions) {
-        return Collections.emptyMap();
+        final Map<String, TransactionReport> reports = new HashMap<>();
+        for (final Transaction transaction : transactions) {
+        }
+        return reports;
     }
 }
  
