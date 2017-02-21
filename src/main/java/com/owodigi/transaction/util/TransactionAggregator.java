@@ -2,8 +2,10 @@ package com.owodigi.transaction.util;
 
 import com.owodigi.transaction.model.Transaction;
 import com.owodigi.transaction.model.TransactionReport;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,15 +57,30 @@ public class TransactionAggregator {
     }
     
     /**
+     * Aggregates all of the given Transactions and returns one TransactionReport
+     * representing the average for all the data represented in the data.
      * 
-     * @param transactions
-     * @return 
+     * The key in the resulting map should be regarded as an identifier for the 
+     * TransactionReport; but it may be helpful to know that it is the value 
+     * "average".
+     * 
+     * @param transactions the transactions whose amounts should be aggregated 
+     * @return TransactionReport representing the average for the given data.
+     * @throws NullPointerException if given Transaction List is null
      */
-    public static Map<String, TransactionReport> average(List<Transaction> transactions) {
-        final Map<String, TransactionReport> reports = new HashMap<>();
-        for (final Transaction transaction : transactions) {
+    public static Map<String, TransactionReport> average(List<Transaction> transactions) throws NullPointerException {
+        final TransactionReport average = new TransactionReport();
+        final Map<String, TransactionReport> sum = sum(transactions);
+        sum.forEach((id, transaction) -> {
+            average.setSpent(average.spent().add(transaction.spent().abs()));
+            average.setIncome(average.income().add(transaction.income()));
+        });
+        if (sum.isEmpty() == false) {
+            average.setSpent(average.spent().divide(BigDecimal.valueOf(sum.size())));
+            average.setIncome(average.income().divide(BigDecimal.valueOf(sum.size())));
+            return Collections.singletonMap("average", average);
         }
-        return reports;
+        return Collections.emptyMap();
     }
 }
  

@@ -52,6 +52,17 @@ public class TransactionAggregatorTest {
     }
     
     @Test
+    public void testAverageAllExpenses() {
+        endpoint = new MockTransactionEndpoint(ALL_EXPENSES_PATH);
+        final List<Transaction> transactions = endpoint.getAllTransactions();
+        final Map<String, TransactionReport> expected = new HashMap<String, TransactionReport>() {{
+            put("average", new TransactionReport(BigDecimal.valueOf(676150L), BigDecimal.ZERO));
+        }};
+        final Map<String, TransactionReport> actual = TransactionAggregator.average(transactions);
+        assertEquals("Transaction Report", expected, actual);
+    }
+    
+    @Test
     public void testSumAllIncome() {
         endpoint = new MockTransactionEndpoint(ALL_INCOME_PATH);
         final List<Transaction> transactions = endpoint.getAllTransactions();

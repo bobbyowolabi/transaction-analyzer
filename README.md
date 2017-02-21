@@ -7,4 +7,9 @@
 ## How To Build:
 - Execute `mvn clean install` in the top level directory of the source.
 
+## How to Run:
+
+## Assumptions
+Definition of Average
+
 ## License Information
