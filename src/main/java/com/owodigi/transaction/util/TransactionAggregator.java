@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A utility class that combines the amounts of Transaction to produce reports
@@ -78,28 +79,10 @@ public class TransactionAggregator {
     }
     
     /**
-     * Aggregates all of the given Transactions and returns a TransactionReport
-     * representing the total of the provided transactions.
-     * 
-     * All of the values represent in the TransactionReport are expanded in the
-     * hundredths place.
-     * 
-     * @param transactions the transactions whose amounts should be aggregated 
-     * @return TransactionReport representing the total of the provided transactions.
-     */
-    private static TransactionReport total(List<Transaction> transactions) {
-        final TransactionReport total = new TransactionReport(BigDecimal.ZERO.setScale(2), BigDecimal.ZERO.setScale(2));
-        final Map<String, TransactionReport> monthlyTotals = monthlyTotals(transactions);
-        monthlyTotals.forEach((id, transaction) -> {
-            total.setSpent(total.spent().add(transaction.spent().abs()));
-            total.setIncome(total.income().add(transaction.income()));
-        });      
-        return total;
-    }
-    
-    /**
      * Returns a BigDecimal whose value is (a / b). The result is 
      * rounded up when the fraction is >= 0.50; otherwise it is rounded down.
+     * 
+     * If b
      * 
      * @param a dividend in the division operation
      * @param b divisor in the division operation
@@ -125,15 +108,28 @@ public class TransactionAggregator {
      * @return TransactionReport representing the average for the given data.
      * @throws NullPointerException if given Transaction List is null
      */
-    public static Map<String, TransactionReport> average(List<Transaction> transactions) throws NullPointerException {
+    public static Map<String, TransactionReport> average(final List<Transaction> transactions) throws NullPointerException {
         if (transactions.isEmpty()) {
             return Collections.emptyMap();
         }
-        final TransactionReport total = total(transactions);
-        final BigDecimal averageSpent = divide(total.spent(), transactions.size());
-        final BigDecimal averageIncome = divide(total.income(), transactions.size());
-        final TransactionReport average = new TransactionReport(averageSpent, averageIncome);
-        return Collections.singletonMap("average", average);
+        final TransactionReport report = new TransactionReport(BigDecimal.ZERO.setScale(2), BigDecimal.ZERO.setScale(2));
+        final AtomicInteger spentCount = new AtomicInteger(), incomeCount = new AtomicInteger();
+        transactions.stream().map(Transaction::amount).forEach(amount -> {
+            if (amount.signum() == -1) {
+                report.setSpent(report.spent().add(amount.abs()));
+                spentCount.incrementAndGet();
+            } else {
+                report.setIncome(report.income().add(amount));
+                incomeCount.incrementAndGet();
+            }
+        });
+        if (spentCount.get() > 0) {
+            report.setSpent(divide(report.spent(), spentCount.get()));
+        }
+        if (incomeCount.get() > 0) {
+            report.setIncome(divide(report.income(), incomeCount.get()));
+        }
+        return Collections.singletonMap("average", report);
     }
 }
  
