@@ -3,6 +3,7 @@ package com.owodigi.transaction.util;
 import com.owodigi.transaction.model.Transaction;
 import com.owodigi.transaction.model.TransactionReport;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -21,6 +22,9 @@ public class TransactionAggregator {
      * Aggregates all of the given Transactions and returns one TransactionReport
      * for every month-year represented in the data.
      * 
+     * All of the values represent in the TransactionReport are expanded in the
+     * hundredths place.
+     * 
      * The key in the resulting map should be regarded as an identifier for the 
      * TransactionReport; but it may be helpful to know that it is of the format
      * {@literal <month>-<year>}.
@@ -29,13 +33,13 @@ public class TransactionAggregator {
      * @return TransactionReport for every month-year represented in the data
      * @throws NullPointerException if given Transaction List is null
      */
-    public static Map<String, TransactionReport> sum(List<Transaction> transactions) throws NullPointerException {
+    public static Map<String, TransactionReport> monthlyTotals(List<Transaction> transactions) throws NullPointerException {
         final Map<String, TransactionReport> reports = new HashMap<>();
         for (final Transaction transaction : transactions) {
             final String identifier = identifier(transaction);
             TransactionReport report = reports.get(identifier);
             if (report == null) {
-                report = new TransactionReport();
+                report = new TransactionReport(BigDecimal.ZERO.setScale(2), BigDecimal.ZERO.setScale(2));
                 reports.put(identifier, report);
             }
             if (isExpense(transaction)) {
@@ -74,8 +78,44 @@ public class TransactionAggregator {
     }
     
     /**
+     * Aggregates all of the given Transactions and returns a TransactionReport
+     * representing the total of the provided transactions.
+     * 
+     * All of the values represent in the TransactionReport are expanded in the
+     * hundredths place.
+     * 
+     * @param transactions the transactions whose amounts should be aggregated 
+     * @return TransactionReport representing the total of the provided transactions.
+     */
+    private static TransactionReport total(List<Transaction> transactions) {
+        final TransactionReport total = new TransactionReport(BigDecimal.ZERO.setScale(2), BigDecimal.ZERO.setScale(2));
+        final Map<String, TransactionReport> monthlyTotals = monthlyTotals(transactions);
+        monthlyTotals.forEach((id, transaction) -> {
+            total.setSpent(total.spent().add(transaction.spent().abs()));
+            total.setIncome(total.income().add(transaction.income()));
+        });      
+        return total;
+    }
+    
+    /**
+     * Returns a BigDecimal whose value is (a / b). The result is 
+     * rounded up when the fraction is >= 0.50; otherwise it is rounded down.
+     * 
+     * @param a dividend in the division operation
+     * @param b divisor in the division operation
+     * @return the quotient, that is a/b
+     */
+    private static BigDecimal divide(final BigDecimal a, final int b) {
+        return a.divide(BigDecimal.valueOf(b), RoundingMode.HALF_UP);
+    }
+    
+    /**
      * Aggregates all of the given Transactions and returns one TransactionReport
      * representing the average for all the data represented in the data.
+     * 
+     * All of the values represented in the TransactionReport are expanded to the
+     * hundredths place and rounded up when the fraction is >= 0.50; otherwise, 
+     * they're rounded down.
      * 
      * The key in the resulting map should be regarded as an identifier for the 
      * TransactionReport; but it may be helpful to know that it is the value 
@@ -86,18 +126,14 @@ public class TransactionAggregator {
      * @throws NullPointerException if given Transaction List is null
      */
     public static Map<String, TransactionReport> average(List<Transaction> transactions) throws NullPointerException {
-        final TransactionReport average = new TransactionReport();
-        final Map<String, TransactionReport> sum = sum(transactions);
-        sum.forEach((id, transaction) -> {
-            average.setSpent(average.spent().add(transaction.spent().abs()));
-            average.setIncome(average.income().add(transaction.income()));
-        });
-        if (sum.isEmpty() == false) {
-            average.setSpent(average.spent().divide(BigDecimal.valueOf(sum.size())));
-            average.setIncome(average.income().divide(BigDecimal.valueOf(sum.size())));
-            return Collections.singletonMap("average", average);
+        if (transactions.isEmpty()) {
+            return Collections.emptyMap();
         }
-        return Collections.emptyMap();
+        final TransactionReport total = total(transactions);
+        final BigDecimal averageSpent = divide(total.spent(), transactions.size());
+        final BigDecimal averageIncome = divide(total.income(), transactions.size());
+        final TransactionReport average = new TransactionReport(averageSpent, averageIncome);
+        return Collections.singletonMap("average", average);
     }
 }
  
