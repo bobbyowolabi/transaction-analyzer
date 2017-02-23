@@ -5,6 +5,7 @@ import com.owodigi.transaction.endpoint.TransactionEndpoint;
 import com.owodigi.transaction.model.Transaction;
 import com.owodigi.transaction.model.TransactionReport;
 import com.owodigi.transaction.util.TransactionAggregator;
+import com.owodigi.transaction.util.TransactionFilter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,7 @@ public class TransactionAnalyzer {
         final Options options = new Options();
         options.addOption(USER_NAME_OPTION);
         options.addOption(PASSWORD_OPTION);
+        options.addOption(IGNORE_DONUTS_OPTION);
 
         final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(options, args);
@@ -60,12 +62,21 @@ public class TransactionAnalyzer {
         final String password = commandLine.getOptionValue(PASSWORD_OPTION.getOpt());
         
         final TransactionEndpoint endpoint = new RestTransactionEndpoint(username, password);
-        final List<Transaction> transactions = endpoint.getAllTransactions();
+        List<Transaction> transactions = endpoint.getAllTransactions();
+        
+        if (commandLine.hasOption(IGNORE_DONUTS_OPTION.getLongOpt())) {
+            System.out.println("Removing Donut Transactions\n");
+            transactions = TransactionFilter.removeMerchants(transactions, 
+                    "Krispy Kreme Donuts", "DUNKIN #336784");
+        }
+        
         final Map<String, TransactionReport> monthlyTotals = TransactionAggregator.monthlyTotals(transactions);
         final Map<String, TransactionReport> average = TransactionAggregator.average(transactions);
         final Map<String, TransactionReport> report = new TreeMap<>(monthlyTotals);
         report.putAll(average);
         write(report);
+        
+        //TODO: Print usage in event of error
     }
     
     private static void write(Map<String, TransactionReport> totals) {
