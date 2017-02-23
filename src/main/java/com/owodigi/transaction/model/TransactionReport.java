@@ -2,6 +2,7 @@ package com.owodigi.transaction.model;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Represents an overview of a user's financial history
@@ -36,6 +37,7 @@ public class TransactionReport {
      * 
      * @return the amount that the user spent for this TransactionReport
      */
+    @JsonProperty("spent")
     public BigDecimal spent() {
         return spent;
     }
@@ -47,6 +49,7 @@ public class TransactionReport {
      * @return the amount that the user received as income for this 
      * TransactionReport
      */
+    @JsonProperty("income")
     public BigDecimal income() {
         return income;
     }
