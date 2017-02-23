@@ -3,13 +3,14 @@ package com.owodigi.transaction.model;
 import java.util.List;
 
 /**
- *
+ * Represents the Response received from the GetAllTransaction Endpoint
  */
-public class TransactionEndpointResult {
+public class GetAllTransactionResponse implements TransactionEndpointResponse {
     private String error;
     private List<Transaction> transactions;
 
-    public String getError() {
+    @Override
+    public String error() {
         return error;
     }
 

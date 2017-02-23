@@ -1,4 +1,4 @@
-#Title
+#Transaction Analyzer
 
 ## Requirements
 * JDK 1.8 or newer

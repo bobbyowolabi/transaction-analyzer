@@ -1,19 +1,22 @@
 package com.owodigi.transaction.endpoint;
 
 import com.owodigi.transaction.model.Transaction;
+import java.io.IOException;
 import java.util.List;
 
 /**
  * API used to interact with a user's transactions
  */
 public interface TransactionEndpoint {
+    public static final String API_TOKEN = "AppTokenForInterview";
     
     /**
      * Retrieves all of the available transaction history for a user
      * 
      * @return all of a user's transactions
+     * @throws java.io.IOException
      */
-    public List<Transaction> getAllTransactions();
+    public List<Transaction> getAllTransactions() throws IOException;
     
     /**
      * Attempts to predict what transactions haven't occurred yet, but probably 

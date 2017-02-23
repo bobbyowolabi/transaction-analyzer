@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * TransactionEndpoint that only returns empty Collections as results.
  */
-public class EmptyTransactionEndpoint implements TransactionEndpoint {
+public class EmptyResponseTransactionEndpoint implements TransactionEndpoint {
 
     @Override
     public List<Transaction> getAllTransactions() {
