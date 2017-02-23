@@ -2,7 +2,7 @@ package com.owodigi.transaction.endpoint;
 
 import com.owodigi.transaction.model.Transaction;
 import com.owodigi.transaction.model.TransactionReport;
-import com.owodigi.transaction.util.AssertTransactionReport;
+import com.owodigi.transaction.util.AssertTransaction;
 import com.owodigi.transaction.util.TransactionAggregator;
 import com.owodigi.transaction.util.TransactionAggregatorTestUtil;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class RestTransactionEndpointTest {
         final List<Transaction> transactions = endpoint.getAllTransactions();
         final Map<String, TransactionReport> expected = TransactionAggregatorTestUtil.expectedMonthlyTotals(transactions);
         final Map<String, TransactionReport> actual = TransactionAggregator.monthlyTotals(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);
     }
 
    @Test
@@ -39,6 +39,6 @@ public class RestTransactionEndpointTest {
         final List<Transaction> transactions = endpoint.getAllTransactions();
         final Map<String, TransactionReport> expected = TransactionAggregatorTestUtil.expectedAverage(transactions);
         final Map<String, TransactionReport> actual = TransactionAggregator.average(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);
     }
 }

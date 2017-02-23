@@ -37,6 +37,16 @@ public class TransactionAnalyzer {
         .numberOfArgs(1)
         .required(true)
         .build();
+    private static final Option IGNORE_DONUTS_OPTION = Option.builder()
+        .argName("Ignore Donuts")
+        .desc("Disregards all donut-related transactions from being included " + 
+                "in the output.  The merchant field is used to determine what's " + 
+                "a donut - donut transactions are named \"Krispy Kreme Donuts\" " + 
+                "or \"DUNKIN #336784\".")
+        .hasArg(false)
+        .longOpt("ignore-donuts")
+        .optionalArg(true)
+        .build();
     
     public static void main(final String[] args) throws ParseException, IOException {
         final Options options = new Options();

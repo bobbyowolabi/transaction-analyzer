@@ -32,7 +32,7 @@ public class TransactionAggregatorTest {
             put("2017-02", new TransactionReport(new BigDecimal("1000000.00"), new BigDecimal("0.00")));
         }};
         final Map<String, TransactionReport> actual = TransactionAggregator.monthlyTotals(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);
     }
     
     @Test
@@ -43,7 +43,7 @@ public class TransactionAggregatorTest {
             put("average", new TransactionReport(new BigDecimal("270460.00"), new BigDecimal("0.00")));
         }};
         final Map<String, TransactionReport> actual = TransactionAggregator.average(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);
     }
     
     @Test
@@ -55,7 +55,7 @@ public class TransactionAggregatorTest {
             put("2017-02", new TransactionReport(new BigDecimal("0.00"), new BigDecimal("1000000.00")));
         }};
         final Map<String, TransactionReport> actual = TransactionAggregator.monthlyTotals(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);
     }
     
     @Test
@@ -66,7 +66,7 @@ public class TransactionAggregatorTest {
             put("average", new TransactionReport(new BigDecimal("0.00"), new BigDecimal("270460.00")));
         }};
         final Map<String, TransactionReport> actual = TransactionAggregator.average(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);        
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);        
     }
     
     @Test
@@ -78,7 +78,7 @@ public class TransactionAggregatorTest {
             put("2017-02", new TransactionReport(new BigDecimal("188800.00"), new BigDecimal("1000000.00")));
         }};
         final Map<String, TransactionReport> actual = TransactionAggregator.monthlyTotals(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TransactionAggregatorTest {
             put("average", new TransactionReport(new BigDecimal("109500.00"), new BigDecimal("377766.67")));
         }};
         final Map<String, TransactionReport> actual = TransactionAggregator.average(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);
     }
     
     @Test
@@ -126,7 +126,7 @@ public class TransactionAggregatorTest {
         final List<Transaction> transactions = endpoint.getAllTransactions();
         final Map<String, TransactionReport> expected = TransactionAggregatorTestUtil.expectedMonthlyTotals(transactions);
         final Map<String, TransactionReport> actual = TransactionAggregator.monthlyTotals(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);
     }
     
    @Test
@@ -135,6 +135,6 @@ public class TransactionAggregatorTest {
         final List<Transaction> transactions = endpoint.getAllTransactions();
         final Map<String, TransactionReport> expected = TransactionAggregatorTestUtil.expectedAverage(transactions);
         final Map<String, TransactionReport> actual = TransactionAggregator.average(transactions);
-        AssertTransactionReport.assertEquals("Transaction Report", expected, actual);
+        AssertTransaction.assertEquals("Transaction Report", expected, actual);
     }
 }
