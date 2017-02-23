@@ -48,12 +48,23 @@ public class TransactionAnalyzer {
         .longOpt("ignore-donuts")
         .optionalArg(true)
         .build();
+    private static final Option IGNORE_CC_PAYMENTS_OPTION = Option.builder()
+        .argName("Ignore Credit Card Payments")
+        .desc("Disregards credit card payments. Credit card payments consist of " + 
+                "two transactions with opposite amounts (e.g. 5000000 centocents " + 
+                "and -5000000 centocents) within 24 hours of each other. A list " + 
+                "of detected credit card payment transactions will be outputted.")
+        .hasArg(false)
+        .longOpt("ignore-cc-payments")
+        .optionalArg(true)
+        .build();
     
     public static void main(final String[] args) throws ParseException, IOException {
         final Options options = new Options();
         options.addOption(USER_NAME_OPTION);
         options.addOption(PASSWORD_OPTION);
         options.addOption(IGNORE_DONUTS_OPTION);
+        options.addOption(IGNORE_CC_PAYMENTS_OPTION);
 
         final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(options, args);
@@ -65,11 +76,16 @@ public class TransactionAnalyzer {
         List<Transaction> transactions = endpoint.getAllTransactions();
         
         if (commandLine.hasOption(IGNORE_DONUTS_OPTION.getLongOpt())) {
-            System.out.println("Removing Donut Transactions\n");
+            System.out.println("Ignoring Donut Transactions");
             transactions = TransactionFilter.removeMerchants(transactions, 
                     "Krispy Kreme Donuts", "DUNKIN #336784");
         }
         
+        if (commandLine.hasOption(IGNORE_CC_PAYMENTS_OPTION.getLongOpt())) {
+            System.out.println("Ignoring Credit Card Payments");
+        }
+        
+        System.out.println();
         final Map<String, TransactionReport> monthlyTotals = TransactionAggregator.monthlyTotals(transactions);
         final Map<String, TransactionReport> average = TransactionAggregator.average(transactions);
         final Map<String, TransactionReport> report = new TreeMap<>(monthlyTotals);
