@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -51,8 +52,10 @@ public class TransactionAnalyzer {
         final TransactionEndpoint endpoint = new RestTransactionEndpoint(username, password);
         final List<Transaction> transactions = endpoint.getAllTransactions();
         final Map<String, TransactionReport> monthlyTotals = TransactionAggregator.monthlyTotals(transactions);
-        
-        write(monthlyTotals);
+        final Map<String, TransactionReport> average = TransactionAggregator.average(transactions);
+        final Map<String, TransactionReport> report = new TreeMap<>(monthlyTotals);
+        report.putAll(average);
+        write(report);
     }
     
     private static void write(Map<String, TransactionReport> totals) {
