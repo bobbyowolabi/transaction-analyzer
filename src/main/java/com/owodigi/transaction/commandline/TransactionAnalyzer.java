@@ -8,13 +8,13 @@ import com.owodigi.transaction.util.TransactionAggregator;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  *
@@ -52,7 +52,24 @@ public class TransactionAnalyzer {
         final List<Transaction> transactions = endpoint.getAllTransactions();
         final Map<String, TransactionReport> monthlyTotals = TransactionAggregator.monthlyTotals(transactions);
         
-        final ObjectMapper mapper = new ObjectMapper();
-        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(monthlyTotals));
+        write(monthlyTotals);
+    }
+    
+    private static void write(Map<String, TransactionReport> totals) {
+        System.out.print("{");
+        int count = 0;
+        for (final Entry<String, TransactionReport> entry : totals.entrySet()) {
+            ++count;
+            System.out.print("\"" + entry.getKey() + "\"");
+            System.out.print(":");
+            System.out.print("{");
+            System.out.print("\"spent\":\"$" + entry.getValue().spent() + "\",");
+            System.out.print("\"income\":\"$" + entry.getValue().income() + "\"");
+            System.out.print("}");
+            if (count != totals.size()) {
+                System.out.println(",");
+            }
+        }
+        System.out.println("}");
     }
 }
