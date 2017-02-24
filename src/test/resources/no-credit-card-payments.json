@@ -27,30 +27,6 @@
         },        
         {
             "account-id": "nonce:comfy-cc/hdhehe",
-            "aggregation-time": 1415041080000,
-            "amount": 5194500,
-            "categorization": "Unknown",
-            "clear-date": 1415042820000,
-            "is-pending": false,
-            "merchant": "Credit Card Payment",
-            "raw-merchant": "CREDIT CARD PAYMENT",
-            "transaction-id": "1415042820000",
-            "transaction-time": "2014-11-03T18:58:00.000Z"
-        },
-        {
-            "account-id": "nonce:comfy-checking/hdhehe",
-            "aggregation-time": 1415048280000,
-            "amount": -5194500,
-            "categorization": "Unknown",
-            "clear-date": 1415193660000,
-            "is-pending": false,
-            "merchant": "CC Payment",
-            "raw-merchant": "CC PAYMENT",
-            "transaction-id": "1415193660000",
-            "transaction-time": "2014-11-03T20:58:00.000Z"
-        },
-        {
-            "account-id": "nonce:comfy-cc/hdhehe",
             "aggregation-time": 1412702940000,
             "amount": -30200,
             "categorization": "Unknown",
@@ -73,18 +49,6 @@
             "transaction-id": "1414153020000",
             "transaction-time": "2014-10-20T23:22:00.000Z"
         },        
-        {
-            "account-id": "nonce:comfy-cc/hdhehe",
-            "aggregation-time": 1412733360000,
-            "amount": 99000,
-            "categorization": "Unknown",
-            "clear-date": 1412845980000,
-            "is-pending": false,
-            "merchant": "Krispy Kreme Donuts",
-            "raw-merchant": "Krispy Kreme Donuts",
-            "transaction-id": "1412845980000",
-            "transaction-time": "2014-10-08T01:56:00.000Z"
-        },
         {
             "account-id": "nonce:comfy-cc/hdhehe",
             "aggregation-time": 1412760240000,
@@ -110,18 +74,6 @@
             "raw-merchant": "ATM WITHDRAWAL",
             "transaction-id": "1487310300000",
             "transaction-time": "2017-02-15T00:00:00.000Z"
-        },
-        {
-            "account-id": "nonce:comfy-cc/hdhehe",
-            "aggregation-time": 1412733360000,
-            "amount": -99000,
-            "categorization": "Unknown",
-            "clear-date": 1412845980000,
-            "is-pending": false,
-            "merchant": "Krispy Kreme Donuts",
-            "raw-merchant": "Krispy Kreme Donuts",
-            "transaction-id": "1412845980000",
-            "transaction-time": "2014-10-08T01:56:00.000Z"
-        }        
+        }
     ]
 }

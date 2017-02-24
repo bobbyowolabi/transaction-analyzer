@@ -5,7 +5,6 @@ import com.owodigi.transaction.model.TransactionReport;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * of a user's financial transaction history.
  */
 public class TransactionAggregator {
-    private static final String TRANSACTION_TIME_FORMAT = "uuuu-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     /**
      * Aggregates all of the given Transactions and returns one TransactionReport
@@ -61,7 +59,7 @@ public class TransactionAggregator {
      * @return identifier of the given transaction
      */
     private static String identifier(final Transaction transaction) {
-        final LocalDateTime date = LocalDateTime.parse(transaction.transactionTime(), DateTimeFormatter.ofPattern(TRANSACTION_TIME_FORMAT));
+        final LocalDateTime date = TransactionUtils.transactionTime(transaction);
         return date.getYear() + "-" + String.format("%02d", date.getMonthValue());
     }
     

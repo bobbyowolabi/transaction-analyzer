@@ -32,4 +32,10 @@ public class TransactionFilterTest {
         actual = TransactionFilter.creditCardTransactions(actual);
         AssertTransaction.assertEquals("Assert Credit Card Payments Removed", expected, actual);
     }
+    
+    //test with cc+  cc- cc+
+    
+    // test with cc+ cc- cc-
+    
+    // need functionality to retrieve cc payments
 }
