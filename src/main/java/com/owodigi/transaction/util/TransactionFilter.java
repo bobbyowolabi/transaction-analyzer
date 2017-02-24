@@ -4,6 +4,7 @@ import com.owodigi.transaction.model.Transaction;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -30,13 +31,6 @@ public class TransactionFilter {
             .collect(Collectors.toList());
     }
 
-    private static void remove(final Transaction transaction, final Map<BigDecimal, List<Transaction>> amountToTransactions) {
-        final List<Transaction> candidates = amountToTransactions.get(transaction.amount());
-        if (candidates != null) {
-            candidates.remove(transaction);
-        }
-    }
-
     private static boolean within24Hours(final Transaction a, final Transaction b) {
         final LocalDateTime aDateTime = TransactionUtils.transactionTime(a);
         final LocalDateTime bDateTime = TransactionUtils.transactionTime(b);
@@ -44,10 +38,9 @@ public class TransactionFilter {
         return Math.abs(hoursDifference) <= 24;
     }
 
-    public static List<Transaction> creditCardTransactions(final List<Transaction> transactions) {
+    public static List<Transaction> creditCardTransactions(final List<Transaction> transactions, final Collection<Transaction> creditCardPayments) {
         final Map<BigDecimal, List<Transaction>> amountToTransactions = transactions.stream()
             .collect(Collectors.groupingBy(transaction -> transaction.amount()));
-        final Set<Transaction> creditCardPayments = new HashSet<>();
         return transactions.stream()
             .filter(transaction -> {
                 if (creditCardPayments.contains(transaction)) {

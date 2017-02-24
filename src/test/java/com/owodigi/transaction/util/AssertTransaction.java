@@ -2,8 +2,8 @@ package com.owodigi.transaction.util;
 
 import com.owodigi.transaction.model.Transaction;
 import com.owodigi.transaction.model.TransactionReport;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
 
@@ -22,7 +22,7 @@ public class AssertTransaction {
      * @param actual the value to check against expected
      * @throws AssertionError if expected and actual are not equal
      */
-    public static void assertEquals(final String message, final List<Transaction> expected, final List<Transaction> actual) {
+    public static void assertEquals(final String message, final Collection<Transaction> expected, final Collection<Transaction> actual) {
         Assert.assertEquals("Transaction List Size", expected.size(), actual.size());
         final Iterator<Transaction> expectedIterator = expected.iterator(), actualIterator = actual.iterator();
         while (expectedIterator.hasNext()) {
