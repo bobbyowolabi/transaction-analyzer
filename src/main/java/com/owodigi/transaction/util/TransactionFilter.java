@@ -50,11 +50,21 @@ public class TransactionFilter {
         final Set<Transaction> creditCardPayments = new HashSet<>();
         return transactions.stream()
             .filter(transaction -> {
-                final List<Transaction> oppositeAmountTransactions = amountToTransactions.get(transaction.amount().negate());
-                final boolean creditCardPayment = oppositeAmountTransactions != null && oppositeAmountTransactions.stream().anyMatch(oppositeAmountTransaction -> within24Hours(transaction, oppositeAmountTransaction));
-                if (creditCardPayment) {
-                    creditCardPayments.add(transaction);
+                if (creditCardPayments.contains(transaction)) {
                     return false;
+                }
+                final List<Transaction> oppositeAmountTransactions = amountToTransactions.get(transaction.amount().negate());
+                if (oppositeAmountTransactions == null) {
+                    return true;
+                } else {
+                    for (final Transaction oppositeAmountTransaction : oppositeAmountTransactions) {
+                        if (creditCardPayments.contains(oppositeAmountTransaction) == false && 
+                                within24Hours(transaction, oppositeAmountTransaction)) {
+                            creditCardPayments.add(transaction);
+                            creditCardPayments.add(oppositeAmountTransaction);
+                            return false;
+                        }
+                    }
                 }
                 return true;
             })
