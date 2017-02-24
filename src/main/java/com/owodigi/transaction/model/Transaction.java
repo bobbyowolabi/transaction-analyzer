@@ -20,6 +20,7 @@ public class Transaction {
     private String merchant;
     private String transactionTime;
 
+    @JsonProperty("amount")
     public BigDecimal amount() {
         return amount;
     }
@@ -28,34 +29,42 @@ public class Transaction {
         return isPending;
     }
 
+    @JsonProperty("aggregation-time")
     public long aggregationTime() {
         return aggregationTime;
     }
 
+    @JsonProperty("account-id")
     public String accountId() {
         return accountId;
     }
 
+    @JsonProperty("clear-date")
     public long clearDate() {
         return clearDate;
     }
 
+    @JsonProperty("transaction-id")
     public long transactionId() {
         return transactionId;
     }
 
+    @JsonProperty("raw-merchant")
     public String rawMerchant() {
         return rawMerchant;
     }
 
+    @JsonProperty("categorization")
     public String categorization() {
         return categorization;
     }
 
+    @JsonProperty("merchant")
     public String merchant() {
         return merchant;
     }
 
+    @JsonProperty("transaction-time")
     public String transactionTime() {
         return transactionTime;
     }

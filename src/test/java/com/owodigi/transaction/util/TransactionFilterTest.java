@@ -65,4 +65,6 @@ public class TransactionFilterTest {
         AssertTransaction.assertEquals("Assert Credit Card Payments Removed", expected, actual);
         AssertTransaction.assertEquals("Credit Card Payments Detected", expectedCreditCardPayments, acutalCreditCardPayments);
     }
+    
+    //test 2 zero amount transactions within 24hours of each other
 }

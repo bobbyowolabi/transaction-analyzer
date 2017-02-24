@@ -7,6 +7,8 @@ import com.owodigi.transaction.model.TransactionReport;
 import com.owodigi.transaction.util.TransactionAggregator;
 import com.owodigi.transaction.util.TransactionFilter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +19,9 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  *
@@ -82,17 +87,33 @@ public class TransactionAnalyzer {
         }
         
         if (commandLine.hasOption(IGNORE_CC_PAYMENTS_OPTION.getLongOpt())) {
-            System.out.println("Ignoring Credit Card Payments");
+            final List<Transaction> creditCardPayments = new ArrayList<>();
+            transactions = TransactionFilter.creditCardTransactions(transactions, creditCardPayments);
+            System.out.println("Ignoring " + creditCardPayments.size() + " Credit Card Payments:");
+            write(creditCardPayments);
+            System.out.print("\n\n\n");
         }
         
-        System.out.println();
+        
         final Map<String, TransactionReport> monthlyTotals = TransactionAggregator.monthlyTotals(transactions);
         final Map<String, TransactionReport> average = TransactionAggregator.average(transactions);
         final Map<String, TransactionReport> report = new TreeMap<>(monthlyTotals);
         report.putAll(average);
         write(report);
+        System.out.println(BigDecimal.ZERO.signum());
         
         //TODO: Print usage in event of error
+    }
+    
+    private static void write(final List<Transaction> transactions) throws IOException {
+        final JsonGenerator generator = new JsonFactory().createJsonGenerator(System.out);
+        final ObjectMapper mapper = new ObjectMapper();
+        generator.writeStartArray();
+        for (final Transaction transaction : transactions) {
+            mapper.writeValue(generator, transaction);
+        }
+        generator.writeEndArray();
+        generator.flush();
     }
     
     private static void write(Map<String, TransactionReport> totals) {
