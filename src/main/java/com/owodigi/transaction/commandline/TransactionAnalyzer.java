@@ -7,7 +7,6 @@ import com.owodigi.transaction.model.TransactionReport;
 import com.owodigi.transaction.util.TransactionAggregator;
 import com.owodigi.transaction.util.TransactionFilter;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,15 +15,13 @@ import java.util.TreeMap;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
- *
+ * Command line tool to display data retrieved from the TransactionEndpoint.
  */
 public class TransactionAnalyzer {
     private static final Option USER_NAME_OPTION = Option.builder("u")
@@ -64,73 +61,91 @@ public class TransactionAnalyzer {
         .optionalArg(true)
         .build();
     
-    public static void main(final String[] args) throws ParseException, IOException {
+    private static Options getOptions() {
         final Options options = new Options();
         options.addOption(USER_NAME_OPTION);
         options.addOption(PASSWORD_OPTION);
         options.addOption(IGNORE_DONUTS_OPTION);
         options.addOption(IGNORE_CC_PAYMENTS_OPTION);
-
+        return options;
+    }
+    
+    private static CommandLine getCommandLine(final String[] args) throws ParseException {
+        final Options options = getOptions();
         final CommandLineParser parser = new DefaultParser();
-        final CommandLine commandLine = parser.parse(options, args);
-        
+        return parser.parse(options, args);        
+    }
+    
+    private static TransactionEndpoint getEndpoint(final CommandLine commandLine) {
         final String username = commandLine.getOptionValue(USER_NAME_OPTION.getOpt());
         final String password = commandLine.getOptionValue(PASSWORD_OPTION.getOpt());
-        
-        final TransactionEndpoint endpoint = new RestTransactionEndpoint(username, password);
-        List<Transaction> transactions = endpoint.getAllTransactions();
-        
-        if (commandLine.hasOption(IGNORE_DONUTS_OPTION.getLongOpt())) {
-            System.out.println("Ignoring Donut Transactions");
-            transactions = TransactionFilter.removeMerchants(transactions, 
-                    "Krispy Kreme Donuts", "DUNKIN #336784");
-        }
-        
-        if (commandLine.hasOption(IGNORE_CC_PAYMENTS_OPTION.getLongOpt())) {
-            final List<Transaction> creditCardPayments = new ArrayList<>();
-            transactions = TransactionFilter.creditCardTransactions(transactions, creditCardPayments);
-            System.out.println("Ignoring " + creditCardPayments.size() + " Credit Card Payments:");
-            write(creditCardPayments);
-            System.out.print("\n\n\n");
-        }
-        
-        
+        return new RestTransactionEndpoint(username, password);        
+    }
+    
+    private static Map<String, TransactionReport> generateMonthlyTotalsAndAverage(final List<Transaction> transactions) {
         final Map<String, TransactionReport> monthlyTotals = TransactionAggregator.monthlyTotals(transactions);
         final Map<String, TransactionReport> average = TransactionAggregator.average(transactions);
         final Map<String, TransactionReport> report = new TreeMap<>(monthlyTotals);
         report.putAll(average);
-        write(report);
-        System.out.println(BigDecimal.ZERO.signum());
-        
-        //TODO: Print usage in event of error
+        return report;
+    }
+    
+    public static void main(final String[] args) throws ParseException, IOException {
+        try {
+            final CommandLine commandLine = getCommandLine(args);
+            final TransactionEndpoint endpoint = getEndpoint(commandLine);
+            List<Transaction> transactions = endpoint.getAllTransactions();
+            if (commandLine.hasOption(IGNORE_DONUTS_OPTION.getLongOpt())) {
+                System.out.println("\nIgnoring Donut Transactions");
+                transactions = TransactionFilter.removeMerchants(transactions, 
+                    "Krispy Kreme Donuts", "DUNKIN #336784");
+            }
+            if (commandLine.hasOption(IGNORE_CC_PAYMENTS_OPTION.getLongOpt())) {
+                final List<Transaction> creditCardPayments = new ArrayList<>();
+                transactions = TransactionFilter.creditCardTransactions(transactions, creditCardPayments);
+                System.out.println("\nIgnoring the following " + creditCardPayments.size() + " Credit Card Payments:");
+                write(creditCardPayments);
+            }
+            final Map<String, TransactionReport> report = generateMonthlyTotalsAndAverage(transactions);
+            System.out.println("\n\nMontly Totals & Average from GetAllTransactions Endpoint:");
+            write(report);
+            System.out.println();
+        } catch(final Exception ex) {
+            System.out.println("Encountered Error: " + ex + "\n\n");
+            new HelpFormatter().printHelp("transaction-analyzer", getOptions(), true);
+        }
     }
     
     private static void write(final List<Transaction> transactions) throws IOException {
-        final JsonGenerator generator = new JsonFactory().createJsonGenerator(System.out);
-        final ObjectMapper mapper = new ObjectMapper();
-        generator.writeStartArray();
+        final JsonWriter writer = new JsonWriter(System.out);
+        int count = 0;
+        writer.writeStartArray();
         for (final Transaction transaction : transactions) {
-            mapper.writeValue(generator, transaction);
+            ++count;
+            writer.writeStartObject();
+            writer.writeStringField("accountId", transaction.accountId())
+                .writeStringField("amount", "$" + transaction.amount().setScale(2))
+                .writeStringField("merchant", transaction.merchant())
+                .writeStringField("transactionTime", transaction.transactionTime(), true);
+            writer.writeEndObject(count == transactions.size());
+            writer.write(count != transactions.size() ? "\n" : "");
         }
-        generator.writeEndArray();
-        generator.flush();
+        writer.writeEndArray();
     }
     
     private static void write(Map<String, TransactionReport> totals) {
-        System.out.print("{");
+        final JsonWriter writer = new JsonWriter(System.out);
+        writer.writeStartObject();
         int count = 0;
         for (final Entry<String, TransactionReport> entry : totals.entrySet()) {
             ++count;
-            System.out.print("\"" + entry.getKey() + "\"");
-            System.out.print(":");
-            System.out.print("{");
-            System.out.print("\"spent\":\"$" + entry.getValue().spent() + "\",");
-            System.out.print("\"income\":\"$" + entry.getValue().income() + "\"");
-            System.out.print("}");
-            if (count != totals.size()) {
-                System.out.println(",");
-            }
-        }
-        System.out.println("}");
+            writer.writeStringField(entry.getKey());
+            writer.writeStartObject();
+            writer.writeStringField("spent", "$" + entry.getValue().spent());
+            writer.writeStringField("income", "$" + entry.getValue().income(), true);
+            writer.writeEndObject(count == totals.size());
+            writer.write(count != totals.size() ? "\n" : "");
+        }        
+        writer.writeEndObject();
     }
 }
