@@ -126,7 +126,7 @@
         {
             "account-id": "nonce:comfy-cc/hdhehe",
             "aggregation-time": 1412733360000,
-            "amount": 99000,
+            "amount": -99000,
             "categorization": "Unknown",
             "clear-date": 1412845980000,
             "is-pending": false,
