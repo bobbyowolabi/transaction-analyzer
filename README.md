@@ -33,7 +33,8 @@ The following usage will be produced:
          -p,--password <Password>    Password for the account
          -u,--username <User Name>   User name of the account
 
-*At a minimum the account user name and password must be provided as arguments.*
+*At a minimum the account user name and password must be provided as arguments in
+order to execute.*
 
 ## Assumptions
 Definition of Average
