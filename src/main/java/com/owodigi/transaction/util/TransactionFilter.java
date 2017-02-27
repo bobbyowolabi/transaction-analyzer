@@ -71,7 +71,7 @@ public class TransactionFilter {
                     return false;
                 }
                 final List<Transaction> oppositeAmountTransactions = amountToTransactions.get(transaction.amount().negate());
-                if (oppositeAmountTransactions == null) {
+                if (oppositeAmountTransactions == null || transaction.amount().equals(BigDecimal.ZERO)) {
                     return true;
                 } else {
                     for (final Transaction oppositeAmountTransaction : oppositeAmountTransactions) {
