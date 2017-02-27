@@ -13,7 +13,7 @@
 ## How to Run:
 Run the following command:
 
-        java -jar <path to executable jar>`
+        java -jar <path to executable jar>
 
 The following usage will be produced:
 
