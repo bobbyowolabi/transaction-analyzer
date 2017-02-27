@@ -15,7 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Hits live system; uses non-source controlled credential file")
+@Ignore("To be used for isolated testing. Notes: Hits live system; uses non-source controlled credential file")
 public class RestTransactionEndpointTest {
     private static TransactionEndpoint endpoint;
 

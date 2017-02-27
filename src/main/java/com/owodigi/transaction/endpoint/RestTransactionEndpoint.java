@@ -75,7 +75,7 @@ public class RestTransactionEndpoint implements TransactionEndpoint {
 
     @Override
     public List<Transaction> getProjectedTransactionsForMonth() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("getProjectedTransactionsForMonth is currently not supported.");
     }
 
     /**

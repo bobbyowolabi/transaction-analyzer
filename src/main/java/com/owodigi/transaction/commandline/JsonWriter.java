@@ -2,6 +2,9 @@ package com.owodigi.transaction.commandline;
 
 import java.io.PrintStream;
 
+/**
+ * Utility to assist with the writing out of customized JSON
+ */
 public class JsonWriter {
     private final PrintStream out;
 

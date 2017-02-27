@@ -22,6 +22,8 @@ public class TransactionFilterTest {
     private static final Path ORPHANED_CREDIT_CC_PAYMENT = Paths.get("src/test/resources/orphaned-credit-cc-payment.json");
     private static final Path ORPHANED_CREDIT_CC_PAYMENT_DETECTED = Paths.get("src/test/resources/orphaned-credit-cc-payment-detected.json");
     private static final Path ORPHANED_CREDIT_CC_PAYMENT_CC_PAYMENT_REMOVED = Paths.get("src/test/resources/orphaned-credit-cc-payment-cc-payments-removed.json");
+    private static final Path ZERO_AMOUNT_TRANSACTION = Paths.get("src/test/resources/zero-amount-transaction.json");
+    private static final Path ZERO_AMOUNT_TRANSACTION_CC_PAYMENT_REMOVED = Paths.get("src/test/resources/zero-amount-transaction-cc-payments-removed.json");
     
     @Test
     public void testFilterDonuts() throws IOException {
@@ -66,5 +68,14 @@ public class TransactionFilterTest {
         AssertTransaction.assertEquals("Credit Card Payments Detected", expectedCreditCardPayments, acutalCreditCardPayments);
     }
     
-    //test 2 zero amount transactions within 24hours of each other
+    @Test
+    public void testZeroAmountTransactionsWithin24HoursofEachOther() {
+        final List<Transaction> expected = new FileBasedTransactionEndpoint(ZERO_AMOUNT_TRANSACTION_CC_PAYMENT_REMOVED).getAllTransactions();
+        final List<Transaction> expectedCreditCardPayments = new FileBasedTransactionEndpoint(CREDIT_CARD_PAYMENTS_DETECTED_PATH).getAllTransactions();
+        List<Transaction> actual = new FileBasedTransactionEndpoint(ZERO_AMOUNT_TRANSACTION).getAllTransactions();
+        final List<Transaction> acutalCreditCardPayments = new ArrayList<>();
+        actual = TransactionFilter.creditCardTransactions(actual, acutalCreditCardPayments);
+        AssertTransaction.assertEquals("Assert Credit Card Payments Removed", expected, actual);
+        AssertTransaction.assertEquals("Credit Card Payments Detected", expectedCreditCardPayments, acutalCreditCardPayments);
+    }
 }
