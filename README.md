@@ -35,8 +35,3 @@ The following usage will be produced:
 
 *At a minimum the account user name and password must be provided as arguments in
 order to execute.*
-
-## Assumptions
-Definition of Average
-
-
